@@ -2,7 +2,7 @@ package es.jklabs.tuenti.challengue.modelo.desafio1;
 
 import es.jklabs.tuenti.challengue.enumerados.desafio1.Posicion;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -11,11 +11,9 @@ import java.util.List;
 public class Estructura {
 	private Mesa referencia;
 	private List<Mesa> mesas;
-	private int numMesas;
 
 	public Estructura(){
-		numMesas = 0;
-		mesas = new ArrayList<Mesa>();
+		mesas = new LinkedList<>();
 	}
 
 	public void addMesa(Posicion posicion) {
@@ -40,7 +38,6 @@ public class Estructura {
 			mesas.add(nueva);
 			referencia = nueva;
 		}
-		numMesas++;
 	}
 
 	public Long getNumSitios() {
@@ -63,18 +60,13 @@ public class Estructura {
 	}
 
 	public int getNumMesas() {
-		return numMesas;
-	}
-
-	public void setNumMesas(int numMesas) {
-		this.numMesas = numMesas;
+		return mesas.size();
 	}
 
 	public void quitarMesa(Posicion posicion) {
 		if (mesas.size() > 1) {
-			Mesa ultima = mesas.get(mesas.size()-1);
-			mesas.remove(ultima);
-			ultima = mesas.get(mesas.size()-1);
+			mesas.remove(mesas.size() - 1);
+			Mesa ultima = mesas.get(mesas.size() - 1);
 			if (posicion.equals(Posicion.NORTE)) {
 				ultima.setNorte(null);
 			} else if (posicion.equals(Posicion.ESTE)) {
@@ -85,7 +77,6 @@ public class Estructura {
 				ultima.setOeste(null);
 			}
 			referencia = ultima;
-			numMesas--;
 		}
 	}
 }
