@@ -1,12 +1,11 @@
 package es.jklabs.tuenti.challengue.desafio;
 
-import es.jklabs.tuenti.challengue.enumerados.desafio1.Posicion;
-import es.jklabs.tuenti.challengue.modelo.desafio1.Estructura;
-import es.jklabs.tuenti.challengue.modelo.desafio1.Solucion;
 import es.jklabs.tuenti.challengue.service.FileUploader;
+import es.jklabs.tuenti.challengue.service.FileWriter;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,61 +14,30 @@ import java.util.logging.Logger;
  */
 public class Desafio1 {
 	private static Logger LOG = Logger.getLogger(Desafio1.class.getName());
-	private static Map<Long, Integer> mapaSoluciones;
 
 	public static void run() {
-		mapaSoluciones = new HashMap<>();
 		Integer numPruebas = Integer.valueOf(FileUploader.getLineas().get(0));
+		List<Long> soluciones = new ArrayList<Long>();
 		for (int i = 1; i <= numPruebas; i++) {
-			try {
 				Long comensales = Long.valueOf(FileUploader.getLineas().get(i));
-				Integer solucion = mapaSoluciones.get(comensales);
-				if (solucion == null) {
-					Solucion sol = calcular(comensales, new Estructura(), Posicion.NORTE);
-					mapaSoluciones.put(comensales, sol.getNumMesas());
-				}
-			} catch (Exception e) {
-				LOG.log(Level.SEVERE, "Prueba " + i, e);
-			}
-		}
-	}
-
-	private static Solucion calcular(Long comensales, Estructura estructura, Posicion posicion) {
-		estructura.addMesa(posicion);
-		Long sitios = estructura.getNumSitios();
-		Solucion solucion;
-		if (sitios >= comensales) {
-			solucion = new Solucion(estructura.getNumMesas(), sitios);
-		} else {
-			Integer mejorSolucion = mapaSoluciones.get(sitios);
-			if (mejorSolucion == null || estructura.getNumMesas() < mejorSolucion) {
-				Solucion solucionNorte = calcular(comensales, estructura, Posicion.NORTE);
-				Solucion solucionEste = calcular(comensales, estructura, Posicion.ESTE);
-				Solucion solucionSur = calcular(comensales, estructura, Posicion.SUR);
-				Solucion solucionOeste = calcular(comensales, estructura, Posicion.OESTE);
-				if (solucionNorte.getNumMesas() < solucionEste.getNumMesas()
-						&& solucionNorte.getNumMesas() < solucionSur.getNumMesas()
-						&& solucionNorte.getNumMesas() < solucionOeste.getNumMesas()) {
-					solucion = solucionNorte;
-				} else if (solucionEste.getNumMesas() < solucionSur.getNumMesas()
-						&& solucionEste.getNumMesas() < solucionOeste.getNumMesas()) {
-					solucion = solucionEste;
-				} else if (solucionSur.getNumMesas() < solucionOeste.getNumMesas()) {
-					solucion = solucionSur;
-				} else {
-					solucion = solucionOeste;
-				}
-				Integer posible = mapaSoluciones.get(solucion.getSitios());
-				if (posible != null && solucion.getNumMesas() < posible) {
-					mapaSoluciones.put(solucion.getSitios(), solucion.getNumMesas());
-				} else if (posible == null) {
-					mapaSoluciones.put(solucion.getSitios(), solucion.getNumMesas());
-				}
+			Long solucion;
+			if (comensales == 0L) {
+				solucion = 0L;
+			} else if (comensales < 4L) {
+				solucion = 1L;
 			} else {
-				solucion = new Solucion(mejorSolucion, sitios);
+				if ((comensales - 2) % 2 == 0) {
+					solucion = (comensales - 2) / 2;
+				} else {
+					solucion = (comensales - 1) / 2;
+				}
 			}
+			soluciones.add(solucion);
 		}
-		estructura.quitarMesa(posicion);
-		return solucion;
+		try {
+			FileWriter.escribir(soluciones, Desafio1.class.getSimpleName());
+		} catch (IOException e) {
+			LOG.log(Level.SEVERE, "Escribir solucion", e);
+		}
 	}
 }

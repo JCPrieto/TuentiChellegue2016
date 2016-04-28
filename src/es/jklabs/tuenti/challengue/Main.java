@@ -6,7 +6,7 @@ import es.jklabs.tuenti.challengue.service.FileUploader;
 public class Main {
 
     public static void main(String[] args) {
-        FileUploader.cargarFichero("testInput.txt");
+		FileUploader.cargarFichero("submitInput.txt");
 		Desafio1.run();
     }
 }
